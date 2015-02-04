@@ -23,43 +23,48 @@
 #include <iostream>
 
 #include "base_neuron.h"
+#include "activate_function.h"
 
 using std::ostream;
 using std::endl;
 
-typedef enum {act_linear, act_sigmoid} activate_function_t;
 
-template<typename T, typename W>
-class neuron : public base_neuron<T,W>
+template<typename VALUE, typename WEIGHT, typename FUNC>
+class neuron : public base_neuron<VALUE,WEIGHT>
 {
+private:
+    typedef VALUE (*activate_function_t)(const vector<VALUE>&, const vector<WEIGHT>&);
+
+
 public:
-    neuron(activate_function_t func_type, vector<W> &weight):
-        act_func_type_(func_type), weight_vec_(weight)
+    neuron(vector<WEIGHT> &weight):
+        weight_vec_(weight),
+        activate_func(FUNC::template activate<VALUE, WEIGHT>),
+        output_(0)
+    {}
+    neuron(const neuron<VALUE, WEIGHT, FUNC> &other):
+        weight_vec_(other.weight_vec_),
+        activate_func(other.activate_func),
+        output_(other.output_)
     {}
 public:
-    virtual int activate(const vector<T> &input, T &output)
+    virtual int activate(const vector<VALUE> &input, VALUE &output)
     {
         if (input.size() != weight_vec_.size())
         {
             return -1;
         }
 
-        output = 0;
-
-        for (unsigned int idx = 0; idx < input.size(); ++idx)
-        {
-            output += input.at(idx) * weight_vec_.at(idx);
-        }
-
-        output_ = output;
+        //output_ = FUNC::template activate<VALUE,WEIGHT>(input, weight_vec_);
+        output_ = activate_func(input, weight_vec_);
         return 0;
     }
-    virtual const vector<W> &get_weight()
+    virtual const vector<WEIGHT> &get_weight()
     {
         return weight_vec_;
     }
 public:
-    friend ostream &operator<<(ostream &out, const neuron<T,W> &input)
+    friend ostream &operator<<(ostream &out, const neuron<VALUE,WEIGHT,FUNC> &input)
     {
         out<<"Weights: ";
 
@@ -76,9 +81,9 @@ public:
 
 
 private:
-    activate_function_t act_func_type_;
-    vector<W> &weight_vec_;
-    T output_;
+    vector<WEIGHT> &weight_vec_;
+    activate_function_t activate_func;
+    VALUE output_;
 };
 
 #endif

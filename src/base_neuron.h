@@ -26,12 +26,12 @@ using std::vector;
 /*
  * weight vector has to be constructed before get any neurons.
  */
-template<typename T, typename W>
+template<typename VALUE, typename WEIGHT>
 class base_neuron
 {
 public:
-    virtual int activate(const vector<T> &input, T &output) = 0;
-    virtual const vector<W> & get_weight() = 0;
+    virtual int activate(const vector<VALUE> &input, VALUE &output) = 0;
+    virtual const vector<WEIGHT> & get_weight() = 0;
 };
 
 #endif //__BASE_NEURON_H__
