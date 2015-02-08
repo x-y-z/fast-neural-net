@@ -22,8 +22,11 @@
 #include <cassert>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 using std::vector;
+using std::max;
+using std::min;
 
 namespace ACT_FUNC
 {
@@ -44,6 +47,12 @@ struct linear
 
         return output;
     }
+
+    template<typename VALUE, typename WEIGHT>
+    static WEIGHT derivative(VALUE output)
+    {
+        return output;
+    }
 };
 
 struct sigmoid
@@ -60,7 +69,13 @@ struct sigmoid
             output += input.at(idx) * weight.at(idx);
         }
 
-        return 1./ 1.+ exp(output);
+        return 1./ (1.+ exp(-max(min(output,(VALUE)500),(VALUE)-500)));
+    }
+
+    template<typename VALUE, typename WEIGHT>
+    static WEIGHT derivative(VALUE output)
+    {
+        return output * (1 - output);
     }
 };
 

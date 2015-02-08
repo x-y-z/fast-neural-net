@@ -17,6 +17,7 @@
  */
 
 #include <iostream>
+#include <string>
 
 #include "activate_function.h"
 #include "neural_layer.h"
@@ -39,10 +40,53 @@ int main()
     //one_neuron.activate(input, output);
 
     //std::cout<<one_neuron<<std::endl;
-    neural_layer<unsigned short, unsigned short, ACT_FUNC::linear> one_neural_layer(4, 5);
+    vector<double> input = {1,0,1,0,1,1,0};
+    vector<double> output = {0,1,1,1,0,0,1};
+    vector<double> pred;
+    vector<double> coef(input.size(),0);
+    neural_layer<double, double, ACT_FUNC::linear> one_neural_layer(input.size(), output.size(), input_layer, 1.0, 0.01);
+    std::string cmd;
+    int count = 0;
+
+    std::cout<<"==========="<<std::endl;
+    std::cout<<one_neural_layer<<std::endl;
+
+
+    while(true)
+    {
+
+        one_neural_layer.activate(input, pred);
+        for (double out : pred)
+        {
+            std::cout<<out<<" ";
+        }
+        std::cout<<endl;
+
+        for (unsigned idx = 0; idx < pred.size(); ++idx)
+        {
+            coef.at(idx) = (pred.at(idx) - output.at(idx));
+        }
+
+        one_neural_layer.back_propagation(coef);
+
+        ++count;
+
+        if (all_of(coef.begin(), coef.end(), [](double param){ return param < 0.05;}))
+        {
+            break;
+        }
+        //if (count % 10 == 0)
+        //{
+            //std::cin>>cmd;
+            //std::cout<<cmd;
+            //if (cmd.compare("quit") == 0)
+                //break;
+        //}
+    }
+    std::cout<<count<<std::endl;
 
     //std::cout<<"==========="<<std::endl;
-    std::cout<<one_neural_layer<<std::endl;
+    //std::cout<<one_neural_layer<<std::endl;
     return 0;
 
 }

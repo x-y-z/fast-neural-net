@@ -32,6 +32,7 @@ class base_neuron
 public:
     virtual int activate(const vector<VALUE> &input, VALUE &output) = 0;
     virtual const vector<WEIGHT> & get_weight() = 0;
+    virtual int back_propagation(const VALUE &actual_output) = 0;
 };
 
 #endif //__BASE_NEURON_H__
