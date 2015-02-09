@@ -67,7 +67,7 @@ public:
 
         for (unsigned idx = 0; idx < output_size_; ++idx)
         {
-            neuron_list_.push_back(
+            neuron_list_.emplace_back(
                 neuron<VALUE, WEIGHT, FUNC>(weight_matrix_.at(idx))
             );
             std::generate_n(weight_matrix_.at(idx).begin(),
