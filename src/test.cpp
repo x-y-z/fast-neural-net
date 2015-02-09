@@ -44,18 +44,18 @@ int main()
     vector<double> output = {0,1,1,1,0,0,1};
     vector<double> pred;
     vector<double> coef(input.size(),0);
-    neural_layer<double, double, ACT_FUNC::linear> one_neural_layer(input.size(), output.size(), input_layer, 1.0, 0.01);
+    base_neural_layer<double, double> *one_neural_layer = new neural_layer<double, double, ACT_FUNC::linear>(input.size(), output.size(), INPUT_LAYER_T, 1.0, 0.01);
     std::string cmd;
     int count = 0;
 
     std::cout<<"==========="<<std::endl;
-    std::cout<<one_neural_layer<<std::endl;
+    std::cout<<*(one_neural_layer)<<std::endl;
 
 
     while(true)
     {
 
-        one_neural_layer.activate(input, pred);
+        one_neural_layer->activate(input, pred);
         for (double out : pred)
         {
             std::cout<<out<<" ";
@@ -67,7 +67,7 @@ int main()
             coef.at(idx) = (pred.at(idx) - output.at(idx));
         }
 
-        one_neural_layer.back_propagation(coef);
+        one_neural_layer->back_propagation(coef);
 
         ++count;
 
@@ -84,6 +84,8 @@ int main()
         //}
     }
     std::cout<<count<<std::endl;
+
+    delete one_neural_layer;
 
     //std::cout<<"==========="<<std::endl;
     //std::cout<<one_neural_layer<<std::endl;

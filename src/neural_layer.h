@@ -24,6 +24,7 @@
 #include <algorithm>
 //#include <list>
 
+#include "base_neural_layer.h"
 #include "neuron.h"
 #include "utils.h"
 
@@ -33,14 +34,23 @@ using std::endl;
 using std::for_each;
 //using std::list;
 
-typedef enum {input_layer, output_layer, hidden_layer} neural_layer_t;
+typedef enum {
+    INPUT_LAYER_T,
+    OUTPUT_LAYER_T,
+    HIDDEN_LAYER_T
+} neural_layer_t;
+
+typedef enum {
+    LINEAR_T,
+    SIGMOID_T
+} activate_method_t;
 
 template<typename VALUE, typename WEIGHT, typename FUNC>
-class neural_layer
+class neural_layer: public base_neural_layer<VALUE, WEIGHT>
 {
 public:
     neural_layer(int input_size, int output_size,
-                 neural_layer_t layer_type = input_layer,
+                 neural_layer_t layer_type = INPUT_LAYER_T,
                  double weight_range=1.,
                  double learning_rate = 0.01):
         input_size_(input_size), output_size_(output_size),
@@ -90,9 +100,10 @@ public:
     }
 
 public:
-    friend ostream &operator<<(ostream &out, const neural_layer &input)
+    //friend ostream &operator<<(ostream &out, const neural_layer<VALUE, WEIGHT, FUNC> &input)
+    virtual void printTo(ostream &out) const
     {
-        for_each(input.neuron_list_.begin(), input.neuron_list_.end(),
+        for_each(neuron_list_.begin(), neuron_list_.end(),
                  [&out](const neuron<VALUE, WEIGHT, FUNC> &item)
                         {out<<item<<endl;}
         );
