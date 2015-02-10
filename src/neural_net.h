@@ -38,9 +38,11 @@ public:
     neural_net(const vector<int> &layer_info,
                const vector<activate_method_t> &layer_act_method,
                double weight_range=1.,
-               double learning_rate = 0.01):
+               double learning_rate = 0.01,
+               VALUE threshold = 0):
         weight_range_(weight_range),
-        learning_rate_(learning_rate)
+        learning_rate_(learning_rate),
+        threshold_(threshold)
     {
         assert(layer_info.size() == layer_act_method.size() + 1);
         //at least one input layer, one output layer
@@ -62,7 +64,23 @@ public:
                                         layer_info.at(idx+1),
                                         layer_type.at(idx),
                                         weight_range,
-                                        learning_rate
+                                        learning_rate,
+                                        threshold
+                                )
+                            );
+                    }
+                    break;
+                case BINARY_LINEAR_T:
+                    {
+                        all_layers_.emplace_back(
+                            new neural_layer<VALUE, WEIGHT,
+                                             ACT_FUNC::binary_linear>(
+                                        layer_info.at(idx),
+                                        layer_info.at(idx+1),
+                                        layer_type.at(idx),
+                                        weight_range,
+                                        learning_rate,
+                                        threshold
                                 )
                             );
                     }
@@ -75,7 +93,8 @@ public:
                                         layer_info.at(idx+1),
                                         layer_type.at(idx),
                                         weight_range,
-                                        learning_rate
+                                        learning_rate,
+                                        threshold
                                 )
                             );
                     }
@@ -148,6 +167,7 @@ private:
     vector<VALUE> prev_output_;
     double weight_range_;
     double learning_rate_;
+    VALUE threshold_;
 };
 
 #endif

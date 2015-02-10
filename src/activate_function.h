@@ -31,6 +31,36 @@ using std::min;
 namespace ACT_FUNC
 {
 
+struct binary_linear
+{
+    template<typename VALUE, typename WEIGHT>
+    static VALUE activate(const vector<VALUE> &input, const vector<WEIGHT> &weight)
+    {
+
+        assert(input.size() == weight.size());
+        VALUE output = 0;
+
+        for (unsigned int idx = 0; idx < input.size(); ++idx)
+        {
+            output += input.at(idx) * weight.at(idx);
+        }
+
+        return output;
+    }
+
+    template<typename VALUE, typename WEIGHT>
+    static WEIGHT derivative(VALUE output)
+    {
+        return 1.0;
+    }
+
+    template<typename VALUE, typename WEIGHT>
+    static VALUE threshold(VALUE output, VALUE threshold)
+    {
+        return  (output > threshold) & 1;
+    }
+};
+
 struct linear
 {
     template<typename VALUE, typename WEIGHT>
@@ -52,6 +82,12 @@ struct linear
     static WEIGHT derivative(VALUE output)
     {
         return 1.0;
+    }
+
+    template<typename VALUE, typename WEIGHT>
+    static VALUE threshold(VALUE output, VALUE)
+    {
+        return output;
     }
 };
 
@@ -76,6 +112,12 @@ struct sigmoid
     static WEIGHT derivative(VALUE output)
     {
         return output * (1 - output);
+    }
+
+    template<typename VALUE, typename WEIGHT>
+    static VALUE threshold(VALUE output, VALUE)
+    {
+        return output;
     }
 };
 

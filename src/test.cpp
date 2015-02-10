@@ -42,24 +42,24 @@ int main(int argc, char** argv)
 
     //std::cout<<one_neuron<<std::endl;
     //
-    vector<double> input = {1,0,1,0,1,1,0};
-    vector<double> output = {0,1,1,1,0,0,1};
-    vector<double> pred;
-    vector<double> coef(input.size(),0);
-    //base_neural_layer<double, double> *one_neural_layer = new neural_layer<double, double, ACT_FUNC::linear>(input.size(), output.size(), OUTPUT_LAYER_T, 1.0, 0.01);
-    std::string cmd;
-    int count = 0;
+
+    typedef unsigned short VAL;
+    typedef unsigned short WEI;
+
+    vector<VAL> input = {1,0,1,0,1,1,0};
+    vector<VAL> output = {0,1,1,1,0,0,1};
+    vector<VAL> pred;
 
     for_each(output.begin(), output.end(), [](double out){std::cout<<out<<" ";});
     std::cout<<std::endl;
 
     vector<int> layer_sizes = {7, 10, 10, 7};
-    vector<activate_method_t> methods(3, SIGMOID_T);
+    vector<activate_method_t> methods(3, BINARY_LINEAR_T);
 
     //vector<int> layer_sizes = {7, 7};
     //vector<activate_method_t> methods(1, LINEAR_T);
 
-    neural_net<double, double> one_net(layer_sizes, methods);
+    neural_net<VAL, WEI> one_net(layer_sizes, methods, 255, 1, 128);
 
     one_net.train(input, output, argc == 2?atoi(argv[1]):10);
 

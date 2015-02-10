@@ -36,23 +36,30 @@ private:
     typedef VALUE (*activate_function_t)(const vector<VALUE>&,
                                          const vector<WEIGHT>&);
     typedef WEIGHT (*derivative_t)(VALUE input);
+    typedef VALUE (*threshold_t)(VALUE input, VALUE threshold);
 
 
 public:
-    neuron(vector<WEIGHT> &weight, double learning_rate = 0.01):
+    neuron(vector<WEIGHT> &weight,
+           double learning_rate = 0.01,
+           VALUE threshold_num = 0):
         weight_vec_(weight),
         activate_func(FUNC::template activate<VALUE, WEIGHT>),
         deriv_func(FUNC::template derivative<VALUE, WEIGHT>),
+        threshold_func(FUNC::template threshold<VALUE, WEIGHT>),
         output_(0),
-        learning_rate_(learning_rate)
+        learning_rate_(learning_rate),
+        threshold_(threshold_num)
     {}
     neuron(const neuron<VALUE, WEIGHT, FUNC> &other):
         weight_vec_(other.weight_vec_),
         activate_func(other.activate_func),
         deriv_func(other.deriv_func),
+        threshold_func(other.threshold_func),
         input_(other.input_),
         output_(other.output_),
-        learning_rate_(other.learning_rate_)
+        learning_rate_(other.learning_rate_),
+        threshold_(other.threshold_)
     {}
 public:
     virtual int activate(const vector<VALUE> &input, VALUE &output)
@@ -64,7 +71,8 @@ public:
 
         input_ = input;
         //output_ = FUNC::template activate<VALUE,WEIGHT>(input, weight_vec_);
-        output_ = output = activate_func(input, weight_vec_);
+        output_ = output = threshold_func(activate_func(input, weight_vec_),
+                                          threshold_);
         return 0;
     }
     virtual const vector<WEIGHT> &get_weight()
@@ -112,11 +120,13 @@ private:
     vector<WEIGHT> &weight_vec_;
     activate_function_t activate_func;
     derivative_t deriv_func;
+    threshold_t threshold_func;
 
     vector<VALUE> input_;
     VALUE output_;
 
     double learning_rate_;
+    VALUE threshold_;
 
 };
 

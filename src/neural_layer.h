@@ -40,6 +40,7 @@ typedef enum {
 } neural_layer_t;
 
 typedef enum {
+    BINARY_LINEAR_T,
     LINEAR_T,
     SIGMOID_T
 } activate_method_t;
@@ -51,7 +52,8 @@ public:
     neural_layer(int input_size, int output_size,
                  neural_layer_t layer_type = OUTPUT_LAYER_T,
                  double weight_range=1.,
-                 double learning_rate = 0.01):
+                 double learning_rate = 0.01,
+                 VALUE threshold = 0):
         input_size_(input_size), output_size_(output_size),
         weight_matrix_(
             vector<vector<WEIGHT> >(output_size_,
@@ -60,14 +62,17 @@ public:
         ),
         layer_type_(layer_type),
         weight_range_(weight_range),
-        learning_rate_(learning_rate)
+        learning_rate_(learning_rate),
+        threshold_(threshold)
 
     {
 
         for (unsigned idx = 0; idx < output_size_; ++idx)
         {
             neuron_list_.emplace_back(
-                neuron<VALUE, WEIGHT, FUNC>(weight_matrix_.at(idx))
+                neuron<VALUE, WEIGHT, FUNC>(weight_matrix_.at(idx),
+                                            learning_rate_,
+                                            threshold_)
             );
             std::generate_n(weight_matrix_.at(idx).begin(),
                             input_size_,
@@ -143,6 +148,7 @@ private:
     neural_layer_t layer_type_;
     double weight_range_;
     double learning_rate_;
+    VALUE threshold_;
 };
 
 #endif
