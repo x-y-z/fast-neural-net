@@ -106,6 +106,8 @@ public:
         out<<"Output: ";
         out<<input.output_;
         out<<endl;
+
+        return out;
     }
 
 
