@@ -21,6 +21,7 @@
 
 #include "activate_function.h"
 #include "neural_layer.h"
+#include "neural_net.h"
 
 int main()
 {
@@ -44,12 +45,18 @@ int main()
     vector<double> output = {0,1,1,1,0,0,1};
     vector<double> pred;
     vector<double> coef(input.size(),0);
-    base_neural_layer<double, double> *one_neural_layer = new neural_layer<double, double, ACT_FUNC::linear>(input.size(), output.size(), INPUT_LAYER_T, 1.0, 0.01);
+    base_neural_layer<double, double> *one_neural_layer = new neural_layer<double, double, ACT_FUNC::linear>(input.size(), output.size(), OUTPUT_LAYER_T, 1.0, 0.01);
     std::string cmd;
     int count = 0;
 
-    std::cout<<"==========="<<std::endl;
-    std::cout<<*(one_neural_layer)<<std::endl;
+
+    vector<int> layer_sizes = {52, 60, 52};
+    vector<activate_method_t> methods(2, SIGMOID_T);
+
+    neural_net<double, double> one_net(layer_sizes, methods);
+
+    //std::cout<<"==========="<<std::endl;
+    //std::cout<<*(one_neural_layer)<<std::endl;
 
 
     while(true)
