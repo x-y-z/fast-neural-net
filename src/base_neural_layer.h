@@ -28,8 +28,11 @@ template<typename VALUE, typename WEIGHT>
 class base_neural_layer
 {
 public:
+    //virtual ~base_neural_layer() {};
+public:
     virtual int activate(const vector<VALUE> &input, vector<VALUE> &output) = 0;
     virtual int back_propagation(const vector<VALUE> grad_coef) = 0;
+    virtual vector<VALUE> get_delta(const vector<VALUE> next_layer_delta) = 0;
 public:
     virtual void printTo(ostream &out) const = 0;
 public:

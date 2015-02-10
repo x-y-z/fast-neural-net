@@ -35,7 +35,6 @@ using std::for_each;
 //using std::list;
 
 typedef enum {
-    INPUT_LAYER_T,
     OUTPUT_LAYER_T,
     HIDDEN_LAYER_T
 } neural_layer_t;
@@ -50,7 +49,7 @@ class neural_layer: public base_neural_layer<VALUE, WEIGHT>
 {
 public:
     neural_layer(int input_size, int output_size,
-                 neural_layer_t layer_type = INPUT_LAYER_T,
+                 neural_layer_t layer_type = OUTPUT_LAYER_T,
                  double weight_range=1.,
                  double learning_rate = 0.01):
         input_size_(input_size), output_size_(output_size),
@@ -97,6 +96,32 @@ public:
         {
             neuron_list_.at(idx).back_propagation(grad_coef.at(idx));
         }
+
+        return 0;
+    }
+    virtual vector<VALUE> get_delta(const vector<VALUE> next_layer_delta)
+    {
+        vector<VALUE> delta(input_size_, 0);
+
+        for (unsigned int input_idx = 0;
+             input_idx < input_size_;
+             ++input_idx)
+        {
+            for (unsigned int output_idx = 0;
+                 output_idx < output_size_;
+                 ++output_idx)
+            {
+                WEIGHT tmp_delta = next_layer_delta.at(output_idx);
+
+                delta.at(input_idx) +=
+                    weight_matrix_.at(output_idx).at(input_idx) *
+                    neuron_list_
+                        .at(output_idx)
+                        .get_delta(next_layer_delta.at(output_idx));
+            }
+        }
+
+        return delta;
     }
 
 public:

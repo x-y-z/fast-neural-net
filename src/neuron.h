@@ -44,8 +44,7 @@ public:
         activate_func(FUNC::template activate<VALUE, WEIGHT>),
         deriv_func(FUNC::template derivative<VALUE, WEIGHT>),
         output_(0),
-        learning_rate_(learning_rate),
-        gradient_(0)
+        learning_rate_(learning_rate)
     {}
     neuron(const neuron<VALUE, WEIGHT, FUNC> &other):
         weight_vec_(other.weight_vec_),
@@ -53,8 +52,7 @@ public:
         deriv_func(other.deriv_func),
         input_(other.input_),
         output_(other.output_),
-        learning_rate_(other.learning_rate_),
-        gradient_(other.gradient_)
+        learning_rate_(other.learning_rate_)
     {}
 public:
     virtual int activate(const vector<VALUE> &input, VALUE &output)
@@ -75,19 +73,24 @@ public:
     }
     virtual int back_propagation(const VALUE &grad_coef)
     {
-        gradient_ = grad_coef * deriv_func(output_);
+        //gradient_ = grad_coef * deriv_func(output_);
 
-        WEIGHT delta =  (gradient_ * output_ );
+        //WEIGHT delta =  (gradient_ * output_ );
+        WEIGHT partial_deriv = get_delta(grad_coef) * output_;
 
         for (unsigned int idx = 0; idx < weight_vec_.size(); ++idx)
         {
             weight_vec_.at(idx) = weight_vec_.at(idx) -
                                   learning_rate_ *
-                                    (delta /* +
+                                    (partial_deriv /* +
                                      weight_vec_.at(idx) * weight_decay*/);
         }
 
         return 0;
+    }
+    virtual WEIGHT get_delta(const VALUE &grad_coef) const
+    {
+        return grad_coef * deriv_func(output_);
     }
 public:
     friend ostream &operator<<(ostream &out, const neuron<VALUE,WEIGHT,FUNC> &input)
@@ -115,7 +118,6 @@ private:
     VALUE output_;
 
     double learning_rate_;
-    WEIGHT gradient_;
 
 };
 
