@@ -51,7 +51,7 @@ struct linear
     template<typename VALUE, typename WEIGHT>
     static WEIGHT derivative(VALUE output)
     {
-        return output;
+        return 1.0;
     }
 };
 

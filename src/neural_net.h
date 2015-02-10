@@ -98,6 +98,10 @@ public:
 
         return 0;
     }
+    virtual int predict(const vector<VALUE> &input, vector<VALUE> &output)
+    {
+        return activate(input, output);
+    }
 private:
     virtual int activate(const vector<VALUE> &input,
                          vector<VALUE> &output)

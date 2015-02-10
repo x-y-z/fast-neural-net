@@ -73,16 +73,13 @@ public:
     }
     virtual int back_propagation(const VALUE &grad_coef)
     {
-        //gradient_ = grad_coef * deriv_func(output_);
-
-        //WEIGHT delta =  (gradient_ * output_ );
-        WEIGHT partial_deriv = get_delta(grad_coef) * output_;
+        WEIGHT delta = get_delta(grad_coef);
 
         for (unsigned int idx = 0; idx < weight_vec_.size(); ++idx)
         {
             weight_vec_.at(idx) = weight_vec_.at(idx) -
                                   learning_rate_ *
-                                    (partial_deriv /* +
+                                    (delta * input_.at(idx) /* +
                                      weight_vec_.at(idx) * weight_decay*/);
         }
 
